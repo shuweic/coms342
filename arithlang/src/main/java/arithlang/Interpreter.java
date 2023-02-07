@@ -21,7 +21,7 @@ public class Interpreter {
             Program p = null;
             try {
                 p = reader.read();
-                if(p._e == null) continue REPL;
+                if (p._e == null) continue REPL;
                 Value val = eval.valueOf(p);
                 printer.print(val);
             } catch (IOException e) {

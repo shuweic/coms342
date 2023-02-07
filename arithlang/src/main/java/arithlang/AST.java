@@ -88,6 +88,15 @@ public interface AST {
         }
     }
 
+    public static class ModExp extends CompoundArithExp {
+        public ModExp(List<Exp> args) {
+            super(args);
+        }
+        public Object accept(Visitor visitor) {
+            return visitor.visit(this);
+        }
+    }
+
     public static class MultExp extends CompoundArithExp {
         public MultExp(List<Exp> args) {
             super(args);
@@ -104,6 +113,7 @@ public interface AST {
         public T visit(AST.SubExp e);
         public T visit(AST.MultExp e);
         public T visit(AST.DivExp e);
+        public T visit(AST.ModExp e);
         public T visit(AST.Program p);
     }	
 }

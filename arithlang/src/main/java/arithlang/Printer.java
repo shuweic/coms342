@@ -44,5 +44,14 @@ public class Printer {
                 result += " " + exp.accept(this);
             return result + ")";
         }
+
+        @Override
+        public String visit(ModExp e) {
+            String result = "(%";
+            for(AST.Exp exp : e.all()) {
+                result += " " + exp.accept(this);
+            }
+            return result + ")";
+        }
     }
 }

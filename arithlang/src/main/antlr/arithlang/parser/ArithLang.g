@@ -12,6 +12,7 @@ grammar ArithLang;
         | s=subexp { $ast = $s.ast; }
         | m=multexp { $ast = $m.ast; }
         | d=divexp { $ast = $d.ast; }
+        | h=modexp { $ast = $h.ast; }
         ;
   
  numexp returns [NumExp ast]:
@@ -56,6 +57,15 @@ grammar ArithLang;
  		    ( e=exp { $list.add($e.ast); } )+ 
  		')' { $ast = new DivExp($list); }
  		;
+
+  modexp returns [ModExp ast]
+         locals [ArrayList<Exp> list]
+  		@init { $list = new ArrayList<Exp>(); } :
+  		'(' '%'
+  		    e=exp { $list.add($e.ast); }
+  		    ( e=exp { $list.add($e.ast); } )+
+  		')' { $ast = new ModExp($list); }
+  		;
 
 
  // Lexical Specification of this Programming Language
