@@ -35,13 +35,13 @@ public interface AST {
     }
 
     public static class NumExp extends Exp {
-        double _val;
+        String _val;
 
-        public NumExp(double v) {
+        public NumExp(String v) {
             _val = v;
         }
 
-        public double v() {
+        public String v() {
             return _val;
         }
 		
@@ -79,14 +79,7 @@ public interface AST {
         }
     }
 
-    public static class DivExp extends CompoundArithExp {
-        public DivExp(List<Exp> args) {
-            super(args);
-        }
-        public Object accept(Visitor visitor) {
-            return visitor.visit(this);
-        }
-    }
+
 
     public static class MultExp extends CompoundArithExp {
         public MultExp(List<Exp> args) {
@@ -103,7 +96,6 @@ public interface AST {
         public T visit(AST.AddExp e);
         public T visit(AST.SubExp e);
         public T visit(AST.MultExp e);
-        public T visit(AST.DivExp e);
         public T visit(AST.Program p);
     }	
 }

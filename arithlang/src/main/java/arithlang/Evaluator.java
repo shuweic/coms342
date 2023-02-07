@@ -2,10 +2,11 @@ package arithlang;
 import static arithlang.AST.*;
 import static arithlang.Value.*;
 
+import java.io.IOException;
 import java.util.List;
 
 public class Evaluator implements Visitor<Value> {
-    private NumVal record = new NumVal(0);
+    private NumVal record = new NumVal("0");
     Printer.Formatter ts = new Printer.Formatter();
 	
     Value valueOf(Program p) {
@@ -16,13 +17,59 @@ public class Evaluator implements Visitor<Value> {
     @Override
     public Value visit(AddExp e) {
         List<Exp> operands = e.all();
-        double result = 0;
-        for(Exp exp: operands) {
-            NumVal intermediate = (NumVal) exp.accept(this); // Dynamic type-checking
-            result += intermediate.v(); //Semantics of AddExp in terms of the target language.
+        String result = "";
+        if (operands.size() > 2) {
+            return new NumVal("ERROR we can only have 2 operands");
         }
-        return new NumVal(result);
+        NumVal b = (NumVal)operands.get(0).accept(this);
+        NumVal a = (NumVal)operands.get(1).accept(this);
+        if (a.v().equals("0")) {
+            return new NumVal(b.v());
+        } else if (a.v().equals("p")) {
+            if (b.v().equals("0") || b.v().equals("p")) {
+                return new NumVal("p");
+            } else {
+                return new NumVal("u");
+            }
+        } else if (a.v().equals("n")) {
+            if (b.v().equals("0") || b.v().equals("n")) {
+                return new NumVal("n");
+            } else {
+                return new NumVal("u");
+            }
+        } else {
+            return new NumVal("u");
+        }
     }
+
+
+    public Value visit(SubExp e) {
+        List<Exp> operands = e.all();
+        String result = "";
+        if (operands.size() > 2) {
+            return new NumVal("ERROR we can only have 2 operands");
+        }
+        NumVal b = (NumVal)operands.get(0).accept(this);
+        NumVal a = (NumVal)operands.get(1).accept(this);
+        if (a.v().equals("0")) {
+            return new NumVal(b.v());
+        } else if (a.v().equals("p")) {
+            if (b.v().equals("0") || b.v().equals("n")) {
+                return new NumVal("n");
+            } else {
+                return new NumVal("u");
+            }
+        } else if (a.v().equals("n")) {
+            if (b.v().equals("0") || b.v().equals("p")) {
+                return new NumVal("p");
+            } else {
+                return new NumVal("u");
+            }
+        } else {
+            return new NumVal("u");
+        }
+    }
+
 
     @Override
     public Value visit(NumExp e) {
@@ -30,29 +77,23 @@ public class Evaluator implements Visitor<Value> {
     }
 
     @Override
-    public Value visit(DivExp e) {
-        List<Exp> operands = e.all();
-        NumVal lVal = (NumVal) operands.get(0).accept(this);
-        double result = lVal.v(); 
-        for(int i=1; i<operands.size(); i++) {
-            NumVal rVal = (NumVal) operands.get(i).accept(this);
-            if (rVal.v() == 0) {
-                return new DynamicError(ts.visit(e));
-            }
-            result = result / rVal.v();
-        }
-        return new NumVal(result);
-    }
-
-    @Override
     public Value visit(MultExp e) {
         List<Exp> operands = e.all();
-        double result = 1;
-        for(Exp exp: operands) {
-            NumVal intermediate = (NumVal) exp.accept(this); // Dynamic type-checking
-            result *= intermediate.v(); //Semantics of MultExp.
+        String result = "";
+        if (operands.size() > 2) {
+            return new NumVal("ERROR we can only have 2 operands");
         }
-        return new NumVal(result);
+        NumVal b = (NumVal)operands.get(0).accept(this);
+        NumVal a = (NumVal)operands.get(1).accept(this);
+        if (a.v().equals("0")|| b.v().equals("0")) {
+            return new NumVal("0");
+        } else if (a.v().equals("u") || b.v().equals("u")) {
+            return new NumVal("u");
+        } else if (a.v().equals(b.v())) {
+            return new NumVal("p");
+        } else {
+            return new NumVal("n");
+        }
     }
 
     @Override
@@ -60,15 +101,5 @@ public class Evaluator implements Visitor<Value> {
         return (Value) p.e().accept(this);
     }
 
-    @Override
-    public Value visit(SubExp e) {
-        List<Exp> operands = e.all();
-        NumVal lVal = (NumVal) operands.get(0).accept(this);
-        double result = lVal.v();
-        for(int i=1; i<operands.size(); i++) {
-            NumVal rVal = (NumVal) operands.get(i).accept(this);
-            result = result - rVal.v();
-        }
-        return new NumVal(result);
-    }
+
 }
